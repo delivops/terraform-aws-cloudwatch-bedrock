@@ -72,6 +72,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cloudwatch_metric_alarm.bedrock_client_error_rate_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.bedrock_high_input_tokens_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.bedrock_high_invocations_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 | [aws_cloudwatch_metric_alarm.bedrock_server_error_rate_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
 
@@ -80,6 +81,8 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_sns_topics_arns"></a> [aws\_sns\_topics\_arns](#input\_aws\_sns\_topics\_arns) | List of ARNs for the SNS topics | `list(string)` | `[]` | no |
+| <a name="input_input_tokens_count"></a> [input\_tokens\_count](#input\_input\_tokens\_count) | Number of input tokens | `number` | `100` | no |
+| <a name="input_input_tokens_count_enabled"></a> [input\_tokens\_count\_enabled](#input\_input\_tokens\_count\_enabled) | Enable or disable the invocation of the function | `bool` | `true` | no |
 | <a name="input_invocation_client_error_rate"></a> [invocation\_client\_error\_rate](#input\_invocation\_client\_error\_rate) | Error rate for the invocation of the function | `number` | `10` | no |
 | <a name="input_invocation_client_error_rate_enabled"></a> [invocation\_client\_error\_rate\_enabled](#input\_invocation\_client\_error\_rate\_enabled) | Enable or disable the invocation of the function | `bool` | `true` | no |
 | <a name="input_invocation_count"></a> [invocation\_count](#input\_invocation\_count) | Number of times to invoke the function | `number` | `1` | no |
