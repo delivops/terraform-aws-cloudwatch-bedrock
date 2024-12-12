@@ -35,6 +35,20 @@ variable "invocation_client_error_rate_enabled" {
   default     = true
 
 }
+variable "input_tokens_count" {
+  description = "Number of input tokens"
+  type        = number
+  default     = 100
+  
+}
+
+
+variable "input_tokens_count_enabled" {
+  description = "Enable or disable the invocation of the function"
+  type        = bool
+  default     = true
+
+}
 
 variable "model_id" {
   description = "Name of the model"

@@ -1,16 +1,19 @@
 resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
-  count               = var.invocation_count_enabled ? 1 : 0
-  alarm_name          = "Bedrock | ${var.model_id} | High Invocations"
-  alarm_description   = "High invocations in ${var.model_id}"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = "2"
-  metric_name         = "Invocations"
-  namespace           = "AWS/Bedrock"
-  period              = "3600"
-  statistic           = "Average"
-  threshold           = var.invocation_count
-  alarm_actions       = var.aws_sns_topics_arns
-  ok_actions          = var.aws_sns_topics_arns
+  count                     = var.invocation_count_enabled ? 1 : 0
+  alarm_name                = "Bedrock | ${var.model_id} | High Invocations"
+  alarm_description         = "High invocations in ${var.model_id}"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "Invocations"
+  namespace                 = "AWS/Bedrock"
+  period                    = "3600"
+  statistic                 = "Average"
+  threshold                 = var.invocation_count
+  datapoints_to_alarm       = 2
+  treat_missing_data        = "breaching"
+  alarm_actions             = var.aws_sns_topics_arns
+  ok_actions                = var.aws_sns_topics_arns
+  insufficient_data_actions = var.aws_sns_topics_arns
   dimensions = {
     ModelId = var.model_id
   }
@@ -19,6 +22,30 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
   })
 }
 
+resource "aws_cloudwatch_metric_alarm" "bedrock_high_input_tokens_alarm" {
+  count                     = var.input_tokens_count_enabled ? 1 : 0
+  alarm_name                = "Bedrock | ${var.model_id} | High Input tokens"
+  alarm_description         = "High input tokens in ${var.model_id}"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "2"
+  metric_name               = "InputTokenCount"
+  namespace                 = "AWS/Bedrock"
+  period                    = "3600"
+  statistic                 = "Average"
+  threshold                 = var.input_tokens_count
+  datapoints_to_alarm       = 2
+  treat_missing_data        = "breaching"
+  alarm_actions             = var.aws_sns_topics_arns
+  ok_actions                = var.aws_sns_topics_arns
+  insufficient_data_actions = var.aws_sns_topics_arns
+
+  dimensions = {
+    ModelId = var.model_id
+  }
+  tags = merge(var.tags, {
+    "Terraform" = "true"
+  })
+}
 
 resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
   count               = var.invocation_client_error_rate_enabled ? 1 : 0
@@ -27,8 +54,12 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 2
   threshold           = var.invocation_sever_error_rate
-  alarm_actions       = var.aws_sns_topics_arns
-  ok_actions          = var.aws_sns_topics_arns
+  datapoints_to_alarm = 2
+
+  treat_missing_data        = "breaching"
+  alarm_actions             = var.aws_sns_topics_arns
+  ok_actions                = var.aws_sns_topics_arns
+  insufficient_data_actions = var.aws_sns_topics_arns
   tags = merge(var.tags, {
     "Terraform" = "true"
   })
@@ -77,8 +108,11 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_server_error_rate_alarm" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 2
   threshold           = var.invocation_sever_error_rate
-  alarm_actions       = var.aws_sns_topics_arns
-  ok_actions          = var.aws_sns_topics_arns
+  datapoints_to_alarm       = 2
+  treat_missing_data        = "breaching"
+  alarm_actions             = var.aws_sns_topics_arns
+  ok_actions                = var.aws_sns_topics_arns
+  insufficient_data_actions = var.aws_sns_topics_arns
   tags = merge(var.tags, {
     "Terraform" = "true"
   })
