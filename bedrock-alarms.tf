@@ -7,7 +7,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
   metric_name               = "Invocations"
   namespace                 = "AWS/Bedrock"
   period                    = "3600"
-  statistic                 = "Average"
+  statistic                 = "Sum"
   threshold                 = var.invocation_count
   datapoints_to_alarm       = 2
   treat_missing_data        = "breaching"
