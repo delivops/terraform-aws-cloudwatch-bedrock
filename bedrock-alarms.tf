@@ -11,9 +11,9 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
   statistic                 = "Sum"
   threshold                 = var.invocation_count
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.invocation_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.invocation_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.invocation_sns_arns)
   dimensions = {
     ModelId = var.model_id
   }
@@ -35,9 +35,9 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_input_tokens_alarm" {
   statistic                 = "Average"
   threshold                 = var.input_tokens_count
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.input_tokens_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.input_tokens_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.input_tokens_sns_arns)
 
   dimensions = {
     ModelId = var.model_id
@@ -56,9 +56,9 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
   datapoints_to_alarm       = 8
   threshold                 = var.invocation_server_error_rate
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.invocation_client_error_rate_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.invocation_client_error_rate_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.invocation_client_error_rate_sns_arns)
   tags = merge(var.tags, {
     "Terraform" = "true"
   })
@@ -109,9 +109,9 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_server_error_rate_alarm" {
   evaluation_periods        = 12
   datapoints_to_alarm       = 8
   treat_missing_data        = "breaching"
-  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
-  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
-  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
+  alarm_actions             = concat(var.all_alarms_sns_arns, var.invocation_server_error_rate_sns_arns)
+  ok_actions                = concat(var.all_alarms_sns_arns, var.invocation_server_error_rate_sns_arns)
+  insufficient_data_actions = concat(var.all_alarms_sns_arns, var.invocation_server_error_rate_sns_arns)
   tags = merge(var.tags, {
     "Terraform" = "true"
   })

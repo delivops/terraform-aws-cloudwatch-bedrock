@@ -12,7 +12,7 @@ variable "invocation_count_enabled" {
 
 }
 
-variable "invocation_sns_topics_arns" {
+variable "invocation_sns_arns" {
   description = "List of ARNs for the SNS topics"
   type        = list(string)
   default     = []
@@ -30,7 +30,7 @@ variable "invocation_server_error_rate_enabled" {
   default     = true
 
 }
-variable "invocation_server_error_rate_sns_topics_arns" {
+variable "invocation_server_error_rate_sns_arns" {
   description = "List of ARNs for the SNS topics"
   type        = list(string)
   default     = []
@@ -48,7 +48,7 @@ variable "invocation_client_error_rate_enabled" {
   default     = true
 
 }
-variable "invocation_client_error_rate_sns_topics_arns" {
+variable "invocation_client_error_rate_sns_arns" {
   description = "List of ARNs for the SNS topics"
   type        = list(string)
   default     = []
@@ -68,7 +68,7 @@ variable "input_tokens_count_enabled" {
   default     = true
 
 }
-variable "input_tokens_sns_topics_arns" {
+variable "input_tokens_sns_arns" {
   description = "List of ARNs for the SNS topics"
   type        = list(string)
   default     = []
@@ -82,7 +82,7 @@ variable "model_id" {
 
 }
 
-variable "global_sns_topics_arns" {
+variable "all_alarms_sns_arns" {
   description = "List of ARNs for the SNS topics"
   type        = list(string)
   default     = []
