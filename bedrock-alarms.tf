@@ -1,19 +1,19 @@
 resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
   count                     = var.invocation_count_enabled ? 1 : 0
-  alarm_name                = "Bedrock | ${var.model_id} | High Invocations"
+  alarm_name                = "Bedrock | High Invocations (>${var.invocation_count}) | ${var.model_id}"
   alarm_description         = "High invocations in ${var.model_id}"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = 5
+  datapoints_to_alarm       = 5
   metric_name               = "Invocations"
   namespace                 = "AWS/Bedrock"
-  period                    = "3600"
+  period                    = 300
   statistic                 = "Sum"
   threshold                 = var.invocation_count
-  datapoints_to_alarm       = 2
   treat_missing_data        = "breaching"
-  alarm_actions             = var.aws_sns_topics_arns
-  ok_actions                = var.aws_sns_topics_arns
-  insufficient_data_actions = var.aws_sns_topics_arns
+  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
+  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
+  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_sns_topics_arns)
   dimensions = {
     ModelId = var.model_id
   }
@@ -24,20 +24,20 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_invocations_alarm" {
 
 resource "aws_cloudwatch_metric_alarm" "bedrock_high_input_tokens_alarm" {
   count                     = var.input_tokens_count_enabled ? 1 : 0
-  alarm_name                = "Bedrock | ${var.model_id} | High Input tokens"
+  alarm_name                = "Bedrock | High Input tokens (>${var.input_tokens_count}) | ${var.model_id}"
   alarm_description         = "High input tokens in ${var.model_id}"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "2"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = 5
+  datapoints_to_alarm       = 5
   metric_name               = "InputTokenCount"
   namespace                 = "AWS/Bedrock"
-  period                    = "3600"
+  period                    = 300
   statistic                 = "Average"
   threshold                 = var.input_tokens_count
-  datapoints_to_alarm       = 2
   treat_missing_data        = "breaching"
-  alarm_actions             = var.aws_sns_topics_arns
-  ok_actions                = var.aws_sns_topics_arns
-  insufficient_data_actions = var.aws_sns_topics_arns
+  alarm_actions             = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
+  ok_actions                = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
+  insufficient_data_actions = concat(var.global_sns_topics_arns, var.input_tokens_sns_topics_arns)
 
   dimensions = {
     ModelId = var.model_id
@@ -48,18 +48,17 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_high_input_tokens_alarm" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
-  count               = var.invocation_client_error_rate_enabled ? 1 : 0
-  alarm_name          = "Bedrock | ${var.model_id} | High Error Rate Client"
-  alarm_description   = "Client Error rate in ${var.model_id}"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 2
-  threshold           = var.invocation_sever_error_rate
-  datapoints_to_alarm = 2
-
+  count                     = var.invocation_client_error_rate_enabled ? 1 : 0
+  alarm_name                = "Bedrock | High Error Rate Client (>${var.invocation_client_error_rate}%) | ${var.model_id}"
+  alarm_description         = "Client Error rate in ${var.model_id}"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = 12
+  datapoints_to_alarm       = 8
+  threshold                 = var.invocation_server_error_rate
   treat_missing_data        = "breaching"
-  alarm_actions             = var.aws_sns_topics_arns
-  ok_actions                = var.aws_sns_topics_arns
-  insufficient_data_actions = var.aws_sns_topics_arns
+  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
+  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
+  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_client_error_rate_sns_topics_arns)
   tags = merge(var.tags, {
     "Terraform" = "true"
   })
@@ -76,7 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
     metric {
       metric_name = "Invocations"
       namespace   = "AWS/Bedrock"
-      period      = 3600
+      period      = 300
       stat        = "Sum"
       unit        = "Count"
       dimensions = {
@@ -90,7 +89,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
     metric {
       metric_name = "InvocationClientErrors"
       namespace   = "AWS/Bedrock"
-      period      = 3600
+      period      = 300
       stat        = "Sum"
       unit        = "Count"
       dimensions = {
@@ -102,17 +101,17 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_client_error_rate_alarm" {
 
 
 resource "aws_cloudwatch_metric_alarm" "bedrock_server_error_rate_alarm" {
-  count               = var.invocation_server_error_rate_enabled ? 1 : 0
-  alarm_name          = "Bedrock | ${var.model_id} | High Error Rate Server"
-  alarm_description   = "Server Error rate in ${var.model_id}"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 2
-  threshold           = var.invocation_sever_error_rate
-  datapoints_to_alarm       = 2
+  count                     = var.invocation_server_error_rate_enabled ? 1 : 0
+  alarm_name                = "Bedrock | High Error Rate Server (>${var.invocation_server_error_rate}%) | ${var.model_id}"
+  alarm_description         = "Server Error rate in ${var.model_id}"
+  comparison_operator       = "GreaterThanThreshold"
+  threshold                 = var.invocation_server_error_rate
+  evaluation_periods        = 12
+  datapoints_to_alarm       = 8
   treat_missing_data        = "breaching"
-  alarm_actions             = var.aws_sns_topics_arns
-  ok_actions                = var.aws_sns_topics_arns
-  insufficient_data_actions = var.aws_sns_topics_arns
+  alarm_actions             = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
+  ok_actions                = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
+  insufficient_data_actions = concat(var.global_sns_topics_arns, var.invocation_server_error_rate_sns_topics_arns)
   tags = merge(var.tags, {
     "Terraform" = "true"
   })
@@ -129,7 +128,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_server_error_rate_alarm" {
     metric {
       metric_name = "Invocations"
       namespace   = "AWS/Bedrock"
-      period      = 3600
+      period      = 300
       stat        = "Sum"
       unit        = "Count"
       dimensions = {
@@ -143,7 +142,7 @@ resource "aws_cloudwatch_metric_alarm" "bedrock_server_error_rate_alarm" {
     metric {
       metric_name = "InvocationServerErrors"
       namespace   = "AWS/Bedrock"
-      period      = 3600
+      period      = 300
       stat        = "Sum"
       unit        = "Count"
       dimensions = {
